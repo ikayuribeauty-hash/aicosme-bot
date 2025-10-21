@@ -1,0 +1,30 @@
+import os
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
+
+BOT_TOKEN = os.getenv("8376198443:AAH6xKPnbRfVKNqNgYJGKLN0515g9JDPHg0")
+GUIDE_URL = "https://cloud.mail.ru/public/5jmd/ATo34Engb"  # ← замените на вашу ссылку!
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    ref = context.args[0] if context.args else "direct"
+    print(f"Новый пользователь: {user.full_name}, Источник: {ref}")
+    await update.message.reply_text(
+        f"Привет, {user.first_name}! 🌸\n\n"
+        "Вот твой гид «5 японских привычек ухода дома»:\n"
+        f"[📥 Скачать PDF]({GUIDE_URL})\n\n"
+        "Подпишись на @aicosme — там ещё больше советов!",
+        parse_mode="Markdown"
+    )
+
+async def guide(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await start(update, context)
+
+def main():
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("guide", guide))
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
